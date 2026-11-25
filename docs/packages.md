@@ -2,7 +2,7 @@
 
 ## 워크스페이스에서 빌드하는 ROS 패키지
 
-패키지 이름은 각 디렉터리의 `package.xml` 기준이다. `vendor/`의 세 패키지는 [원본 리비전](../vendor/revisions.repos)과 함께 동봉했다.
+패키지 이름은 각 디렉터리의 `package.xml` 기준입니다. `vendor/`의 세 패키지는 [원본 리비전](../vendor/revisions.repos)과 함께 동봉했습니다.
 
 | 패키지 | 역할 | 직접 선언한 빌드·실행 의존성 |
 |---|---|---|
@@ -17,7 +17,7 @@
 
 ## NVIDIA GPU 호스트용 선택 패키지
 
-다음 표는 [설치 스크립트가 사용하는 목록](../isaac_ros/packages.txt)이다. 각 이름 앞에 `ros-lyrical-`을 붙이면 APT 패키지명이 된다. 설치한 launch 파일·컴포넌트는 `source tools/isaac_env.bash` 후 `python3 isaac_ros/catalog.py`로 조회한다. 모델과 센서 입력은 [GPU 실습 안내](../isaac_ros/README.md)를 따른다.
+다음 표는 [설치 스크립트가 사용하는 목록](../isaac_ros/packages.txt)입니다. 각 이름 앞에 `ros-lyrical-`을 붙이면 APT 패키지명이 됩니다. 설치한 launch 파일·컴포넌트는 `source tools/isaac_env.bash` 후 `python3 isaac_ros/catalog.py`로 조회합니다. 모델과 센서 입력은 [GPU 실습 안내](../isaac_ros/README.md)를 따릅니다.
 
 | 패키지 | 패키지 | 패키지 |
 |---|---|---|
@@ -40,8 +40,8 @@
 
 | 환경 | 사용 패키지와 용도 |
 |---|---|
-| Isaac Sim 6.1 | PhysX 물리, USD 로봇 가져오기, Replicator RGB·깊이 렌더링. ROS 브리지에는 Lyrical의 `rclpy`, `sensor_msgs`, `rosgraph_msgs`가 필요하다. |
+| Isaac Sim 6.1 | PhysX 물리, USD 로봇 가져오기, Replicator RGB·깊이 렌더링. ROS 브리지에는 Lyrical의 `rclpy`, `sensor_msgs`, `rosgraph_msgs`가 필요합니다. |
 | Isaac Lab 3 | Newton·MJWarp 물리 환경, CUDA PyTorch, Stable-Baselines3 PPO |
-| VLA·모방학습 | Transformers·Hugging Face Hub로 모델과 시연을 읽고, PyArrow·PyAV로 프레임을 맞춘다. NumPy·Pillow는 전처리, Matplotlib은 평가 결과 시각화에 사용한다. [설치 버전](../learning/requirements.txt) |
-| 계획·추론 | cuRobo 2의 Python API는 독립 관절 계획 예제에서 사용한다. TensorRT와 `trtexec`는 YOLO 엔진 생성에 사용한다. |
-| 마운트 | Bambu Studio에서 제공된 3MF를 열 수 있다. 형상을 재생성하는 Python 스크립트는 NumPy와 manifold3d를 사용한다. |
+| VLA·모방학습 | Transformers·Hugging Face Hub로 모델과 시연을 읽고, PyArrow·PyAV로 프레임을 맞춥니다. NumPy·Pillow는 전처리, Matplotlib은 평가 결과 시각화에 사용합니다. [설치 버전](../learning/requirements.txt) |
+| 계획·추론 | cuRobo 2의 Python API는 독립 관절 계획 예제에서 사용합니다. TensorRT와 `trtexec`는 YOLO 엔진 생성에 사용합니다. |
+| 마운트 | Bambu Studio에서 제공된 3MF를 열 수 있습니다. 형상을 재생성하는 Python 스크립트는 NumPy와 manifold3d를 사용합니다. |
