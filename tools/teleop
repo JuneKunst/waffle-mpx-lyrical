@@ -1,0 +1,78 @@
+#!/usr/bin/env python3
+"""Keyboard control with stamped base commands and feedback-relative joint steps."""
+import curses
+import math
+
+import rclpy
+from builtin_interfaces.msg import Duration
+from geometry_msgs.msg import TwistStamped
+from sensor_msgs.msg import JointState
+from rclpy.qos import qos_profile_sensor_data
+from trajectory_msgs.msg import JointTrajectory, JointTrajectoryPoint
+
+ARM = ['joint1', 'joint2', 'joint3', 'joint4']
+LIMITS = [(-.9*math.pi,.9*math.pi),(-.57*math.pi,.5*math.pi),
+          (-.3*math.pi,.44*math.pi),(-.57*math.pi,.65*math.pi),(-.010,.019)]
+
+
+def run(screen, node):
+    base = node.create_publisher(TwistStamped, 'cmd_vel', 1)
+    arm = node.create_publisher(JointTrajectory, 'arm_controller/joint_trajectory', 1)
+    grip = node.create_publisher(JointTrajectory, 'gripper_controller/joint_trajectory', 1)
+    positions = {}
+
+    def feedback(msg):
+        positions.update(zip(msg.name, msg.position))
+
+    node.create_subscription(JointState, 'joint_states', feedback, qos_profile_sensor_data)
+
+    def drive(linear=0., angular=0.):
+        cmd = TwistStamped()
+        cmd.header.stamp = node.get_clock().now().to_msg()
+        cmd.twist.linear.x, cmd.twist.angular.z = linear, angular
+        base.publish(cmd)
+
+    screen.addstr('W/S forward/reverse, A/D turn, SPACE stop, ESC exit\n'
+                  '1/2/3/4 select arm joint, 5 gripper, +/- jog selected joint\n')
+    screen.timeout(50)
+    selected = 0
+    try:
+        while rclpy.ok():
+            rclpy.spin_once(node, timeout_sec=0)
+            key = screen.getch()
+            if key == 27:
+                break
+            if key < 0 or key > 255:
+                continue
+            key = chr(key).lower()
+            speeds = {'w': (.12,0.), 's': (-.12,0.), 'a': (0.,.65), 'd': (0.,-.65), ' ': (0.,0.)}
+            if key in speeds:
+                drive(*speeds[key])
+            elif key in '12345':
+                selected = int(key)-1
+            elif key in '+-=':
+                names = ARM if selected < 4 else ['gripper_left_joint']
+                if not all(n in positions and math.isfinite(positions[n]) for n in names):
+                    continue
+                idx = selected if selected < 4 else 0
+                target = [positions[n] for n in names]
+                step = .06 if selected < 4 else .002
+                lower, upper = LIMITS[selected]
+                target[idx] = min(upper,max(lower,target[idx]+(-step if key=='-' else step)))
+                traj = JointTrajectory(joint_names=names, points=[JointTrajectoryPoint(
+                    positions=target, time_from_start=Duration(nanosec=350000000))])
+                (arm if selected < 4 else grip).publish(traj)
+            screen.addstr(2,0,f'Selected { (ARM+["gripper"])[selected]:12}')
+    finally:
+        if rclpy.ok():
+            drive()
+
+
+if __name__ == '__main__':
+    rclpy.init()
+    node = rclpy.create_node('waffle_keyboard')
+    try:
+        curses.wrapper(run, node)
+    finally:
+        node.destroy_node()
+        rclpy.try_shutdown()

@@ -1,0 +1,13 @@
+repositories:
+  dynamixel_sdk_source:
+    type: git
+    url: https://github.com/ROBOTIS-GIT/DynamixelSDK.git
+    version: ac08a51d0cb22a8bede7d65f1e4706fc75dbf1d1
+  coin_d4_driver:
+    type: git
+    url: https://github.com/ROBOTIS-GIT/coin_d4_driver.git
+    version: 798a8f020e83f54e635377bb52576091f30f07dd
+  topic_based_ros2_control:
+    type: git
+    url: https://github.com/PickNikRobotics/topic_based_ros2_control.git
+    version: aa9f9ef9525a60f8becea322537dd1d6d1bf9123

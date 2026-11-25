@@ -1,0 +1,20 @@
+<launch>
+  <arg name="engine" description="Absolute path to the TensorRT engine from prepare_yolo.py"/>
+  <arg name="use_sim_time" default="false"/>
+  <include file="$(find-pkg-share turtlebot3_manipulation_bringup)/launch/gpu_example.launch.py">
+    <arg name="package" value="isaac_ros_yolov8"/>
+    <arg name="file" value="yolov8_tensor_rt.launch.py"/>
+    <arg name="use_sim_time" value="$(var use_sim_time)"/>
+    <arg name="engine_file_path" value="$(var engine)"/>
+    <arg name="input_image_width" value="640"/>
+    <arg name="input_image_height" value="480"/>
+    <arg name="network_image_width" value="640"/>
+    <arg name="network_image_height" value="640"/>
+    <arg name="image_mean" value="[0.0,0.0,0.0]"/>
+    <arg name="image_stddev" value="[1.0,1.0,1.0]"/>
+    <arg name="input_binding_names" value='["images"]'/>
+    <arg name="output_binding_names" value='["output0"]'/>
+    <arg name="confidence_threshold" value="0.25"/>
+    <arg name="nms_threshold" value="0.45"/>
+  </include>
+</launch>

@@ -1,0 +1,73 @@
+/*
+ * Copyright 2016 The Cartographer Authors
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+#include "absl/memory/memory.h"
+#include "cartographer/mapping/map_builder.h"
+#include "cartographer_ros/node.h"
+#include "cartographer_ros/node_options.h"
+#include "cartographer_ros/ros_log_sink.h"
+#include "gflags/gflags.h"
+#include "rclcpp/rclcpp.hpp"
+#include "tf2_ros/transform_listener.h"
+
+namespace cartographer_ros {
+namespace {
+
+void Run() {
+  rclcpp::Node::SharedPtr cartographer_node = rclcpp::Node::make_shared("cartographer_node");
+  constexpr double kTfBufferCacheTimeInSeconds = 10.;
+
+  std::shared_ptr<tf2_ros::Buffer> tf_buffer =
+      std::make_shared<tf2_ros::Buffer>(
+        cartographer_node->get_clock(),
+        tf2::durationFromSec(kTfBufferCacheTimeInSeconds),
+        cartographer_node);
+
+  std::shared_ptr<tf2_ros::TransformListener> tf_listener =
+      std::make_shared<tf2_ros::TransformListener>(*tf_buffer);
+
+  NodeOptions node_options;
+  TrajectoryOptions trajectory_options;
+  std::tie(node_options, trajectory_options) =
+      LoadOptions(cartographer_node->declare_parameter<std::string>("configuration_directory"),
+                  cartographer_node->declare_parameter<std::string>("configuration_basename"));
+
+  auto map_builder =
+    cartographer::mapping::CreateMapBuilder(node_options.map_builder_options);
+  auto node = std::make_shared<cartographer_ros::Node>(
+    node_options, std::move(map_builder), tf_buffer, cartographer_node,
+    false);
+  node->StartTrajectoryWithDefaultTopics(trajectory_options);
+
+  rclcpp::spin(cartographer_node);
+
+  node->FinishAllTrajectories();
+  node->RunFinalOptimization();
+
+
+}
+
+}  // namespace
+}  // namespace cartographer_ros
+
+int main(int argc, char** argv) {
+  rclcpp::init(argc, argv);
+
+  google::InitGoogleLogging(argv[0]);
+  cartographer_ros::ScopedRosLogSink ros_log_sink;
+  cartographer_ros::Run();
+  ::rclcpp::shutdown();
+}
