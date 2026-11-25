@@ -1,0 +1,8 @@
+# Add to a compatible existing Isaac Lab 3 PyTorch environment.
+stable-baselines3==2.9.2
+transformers==5.10.4
+huggingface-hub==1.16.1
+num2words==0.5.14
+pyarrow==22.0.0
+av==16.0.1
+Pillow
