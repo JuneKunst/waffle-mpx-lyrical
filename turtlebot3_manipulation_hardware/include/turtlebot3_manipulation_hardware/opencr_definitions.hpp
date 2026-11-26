@@ -91,6 +91,11 @@ constexpr double RPM_TO_RAD_PER_SEC = 0.104719755;
 namespace grippers
 {
 constexpr double RAD_TO_METER = -0.015;
+// ID 15 uses extended position mode. The measured open position is 90.9 degrees.
+constexpr int32_t OPEN_TICK = 1034;
+constexpr int32_t MIN_TICK = -580;
+constexpr int32_t MAX_TICK = 2660;
+constexpr double METER_PER_TICK = RAD_TO_METER * M_PI / 2048.0;
 constexpr int16_t GOAL_CURRENT = 80;
 }  // namespace grippers
 

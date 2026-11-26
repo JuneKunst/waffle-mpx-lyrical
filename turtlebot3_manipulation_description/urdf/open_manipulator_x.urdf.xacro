@@ -42,7 +42,7 @@ https://github.com/ROBOTIS-GIT/open_manipulator/blob/kinetic-devel/open_manipula
       <child link="${prefix}link2"/>
       <origin xyz="0.012 0.0 0.017" rpy="0 0 0"/>
       <axis xyz="0 0 1"/>
-      <limit velocity="4.8" effort="1" lower="${-pi*0.9}" upper="${pi*0.9}" />
+      <limit velocity="4.8" effort="1" lower="${(-3072 - 2048) * pi / 2048}" upper="${(6139 - 2048) * pi / 2048}" />
       <dynamics damping="0.1"/>
     </joint>
 
@@ -76,7 +76,7 @@ https://github.com/ROBOTIS-GIT/open_manipulator/blob/kinetic-devel/open_manipula
       <child link="${prefix}link3"/>
       <origin xyz="0.0 0.0 0.0595" rpy="0 0 0"/>
       <axis xyz="0 1 0"/>
-      <limit velocity="4.8" effort="1" lower="${-pi*0.57}" upper="${pi*0.5}" />
+      <limit velocity="4.8" effort="1" lower="${(834 - 2048) * pi / 2048}" upper="${(3455 - 2048) * pi / 2048}" />
       <dynamics damping="0.1"/>
     </joint>
 
@@ -110,7 +110,7 @@ https://github.com/ROBOTIS-GIT/open_manipulator/blob/kinetic-devel/open_manipula
       <child link="${prefix}link4"/>
       <origin xyz="0.024 0 0.128" rpy="0 0 0"/>
       <axis xyz="0 1 0"/>
-      <limit velocity="4.8" effort="1" lower="${-pi*0.3}" upper="${pi*0.44}" />
+      <limit velocity="4.8" effort="1" lower="${(687 - 2048) * pi / 2048}" upper="${(3034 - 2048) * pi / 2048}" />
       <dynamics damping="0.1"/>
     </joint>
 
@@ -144,7 +144,7 @@ https://github.com/ROBOTIS-GIT/open_manipulator/blob/kinetic-devel/open_manipula
       <child link="${prefix}link5"/>
       <origin xyz="0.124 0.0 0.0" rpy="0 0 0"/>
       <axis xyz="0 1 0"/>
-      <limit velocity="4.8" effort="1" lower="${-pi*0.57}" upper="${pi*0.65}" />
+      <limit velocity="4.8" effort="1" lower="${(707 - 2048) * pi / 2048}" upper="${(3274 - 2048) * pi / 2048}" />
       <dynamics damping="0.1"/>
     </joint>
 
@@ -176,9 +176,9 @@ https://github.com/ROBOTIS-GIT/open_manipulator/blob/kinetic-devel/open_manipula
     <joint name="${prefix}gripper_left_joint" type="prismatic">
       <parent link="${prefix}link5"/>
       <child link="${prefix}gripper_left_link"/>
-      <origin xyz="0.0817 0.021 0.0" rpy="0 0 0"/>
+      <origin xyz="0.0817 0.044332624482987 0.0" rpy="0 0 0"/>
       <axis xyz="0 1 0"/>
-      <limit velocity="4.8" effort="1" lower="-0.010" upper="0.019" />
+      <limit velocity="4.8" effort="1" lower="-0.037413791416530784" upper="0.037137674874711375" />
       <dynamics damping="0.1"/>
     </joint>
 
@@ -216,9 +216,9 @@ https://github.com/ROBOTIS-GIT/open_manipulator/blob/kinetic-devel/open_manipula
     <joint name="${prefix}gripper_right_joint" type="prismatic">
       <parent link="${prefix}link5"/>
       <child link="${prefix}gripper_right_link"/>
-      <origin xyz="0.0817 -0.021 0" rpy="0 0 0"/>
+      <origin xyz="0.0817 -0.044332624482987 0" rpy="0 0 0"/>
       <axis xyz="0 -1 0"/>
-      <limit velocity="4.8" effort="1" lower="-0.010" upper="0.019" />
+      <limit velocity="4.8" effort="1" lower="-0.037413791416530784" upper="0.037137674874711375" />
       <mimic joint="${prefix}gripper_left_joint" multiplier="1"/>
       <dynamics damping="0.1"/>
     </joint>

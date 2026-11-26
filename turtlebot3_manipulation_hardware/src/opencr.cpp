@@ -18,6 +18,7 @@
 
 #include <unistd.h>
 #include <algorithm>
+#include <cmath>
 #include <memory>
 #include <string>
 #include <vector>
@@ -235,9 +236,9 @@ inline int32_t convert_radian_to_tick(
   int32_t zero_tick = (max_tick + min_tick) / 2;
 
   if (radian > 0) {
-    tick = (radian * (max_tick - zero_tick) / max_radian) + zero_tick;
+    tick = std::lround((radian * (max_tick - zero_tick) / max_radian) + zero_tick);
   } else if (radian < 0) {
-    tick = (radian * (min_tick - zero_tick) / min_radian) + zero_tick;
+    tick = std::lround((radian * (min_tick - zero_tick) / min_radian) + zero_tick);
   } else {
     tick = zero_tick;
   }
@@ -327,20 +328,11 @@ std::array<double, 4> OpenCR::get_joint_velocities()
 
 double OpenCR::get_gripper_position()
 {
-  double radian = 0.0;
-
-  int32_t tick = get_data<int32_t>(
+  const auto tick = get_data<int32_t>(
     opencr_control_table.present_position_gripper.address,
     opencr_control_table.present_position_gripper.length);
-
-  radian = convert_tick_to_radian(
-    tick,
-    opencr::joints::MAX_TICK,
-    opencr::joints::MIN_TICK,
-    opencr::joints::MAX_RADIAN,
-    opencr::joints::MIN_RADIAN);
-
-  return radian * opencr::grippers::RAD_TO_METER;
+  return (static_cast<double>(tick) - opencr::grippers::OPEN_TICK) *
+         opencr::grippers::METER_PER_TICK;
 }
 
 double OpenCR::get_gripper_velocity()
@@ -424,13 +416,14 @@ bool OpenCR::set_gripper_variables(const uint16_t & address, const int32_t & var
 
 bool OpenCR::set_gripper_position(const double & meters)
 {
-  double radian = meters / opencr::grippers::RAD_TO_METER;
-  int32_t tick = convert_radian_to_tick(
-    radian,
-    opencr::joints::MAX_TICK,
-    opencr::joints::MIN_TICK,
-    opencr::joints::MAX_RADIAN,
-    opencr::joints::MIN_RADIAN);
+  if (!std::isfinite(meters)) {
+    return false;
+  }
+  const auto goal_tick =
+    meters / opencr::grippers::METER_PER_TICK + opencr::grippers::OPEN_TICK;
+  const auto tick = static_cast<int32_t>(std::lround(std::clamp(
+    goal_tick, static_cast<double>(opencr::grippers::MIN_TICK),
+    static_cast<double>(opencr::grippers::MAX_TICK))));
 
   bool comm_result = set_gripper_variables(
     opencr_control_table.goal_position_gripper.address, tick);

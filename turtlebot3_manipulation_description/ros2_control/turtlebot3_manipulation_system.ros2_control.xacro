@@ -128,8 +128,8 @@
   <xacro:macro name="arm_interfaces" params="prefix">
     <joint name="${prefix}joint1">
       <command_interface name="position">
-        <param name="min">${-pi*0.9}</param>
-        <param name="max">${pi*0.9}</param>
+        <param name="min">${(-3072 - 2048) * pi / 2048}</param>
+        <param name="max">${(6139 - 2048) * pi / 2048}</param>
       </command_interface>
       <state_interface name="position">
         <param name="initial_value">0.0</param>
@@ -140,8 +140,8 @@
     </joint>
     <joint name="${prefix}joint2">
       <command_interface name="position">
-        <param name="min">${-pi*0.57}</param>
-        <param name="max">${pi*0.5}</param>
+        <param name="min">${(834 - 2048) * pi / 2048}</param>
+        <param name="max">${(3455 - 2048) * pi / 2048}</param>
       </command_interface>
       <state_interface name="position">
         <param name="initial_value">0.0</param>
@@ -152,8 +152,8 @@
     </joint>
     <joint name="${prefix}joint3">
       <command_interface name="position">
-        <param name="min">${-pi*0.3}</param>
-        <param name="max">${pi*0.44}</param>
+        <param name="min">${(687 - 2048) * pi / 2048}</param>
+        <param name="max">${(3034 - 2048) * pi / 2048}</param>
       </command_interface>
       <state_interface name="position">
         <param name="initial_value">0.0</param>
@@ -164,8 +164,8 @@
     </joint>
     <joint name="${prefix}joint4">
       <command_interface name="position">
-        <param name="min">${-pi*0.57}</param>
-        <param name="max">${pi*0.65}</param>
+        <param name="min">${(707 - 2048) * pi / 2048}</param>
+        <param name="max">${(3274 - 2048) * pi / 2048}</param>
       </command_interface>
       <state_interface name="position">
         <param name="initial_value">0.0</param>
@@ -176,8 +176,8 @@
     </joint>
     <joint name="${prefix}gripper_left_joint">
       <command_interface name="position">
-        <param name="min">-0.010</param>
-        <param name="max">0.019</param>
+        <param name="min">-0.037413791416530784</param>
+        <param name="max">0.037137674874711375</param>
       </command_interface>
       <state_interface name="position">
         <param name="initial_value">0.0</param>
