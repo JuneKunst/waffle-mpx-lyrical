@@ -4,7 +4,7 @@ TurtleBot3 Waffle Pi에 OpenMANIPULATOR-X, LDS-03(COIN-D4), 전방 RealSense D43
 
 [강화학습·모방학습·Hugging Face VLA 실습](learning/README.md)에는 공개 시연과 웹 이미지로 학습한 모델을 Isaac에서 검증하는 예제가 있습니다. [색상 지시 및 배치별 집기·놓기 시험](learning/README.md#지시한-물체-집어-놓기-평가)은 물체의 물리 상태로 성공률을 계산합니다. [Isaac ROS GPU 실습](isaac_ros/README.md)에는 D435용 cuVSLAM·nvblox·영상 처리와 OpenMANIPULATOR-X용 cuMotion·cuRobo 실행 방법이 있습니다. [색상 시연을 추가한 재학습 예제](learning/color-pick-place.md)는 시연 생성부터 미학습 위치 평가까지 재현합니다.
 
-[13강 · ReAct와 Tool Use](lessons/13-react/)에서는 한국어 거리 조건을 입력해 Isaac Sim의 라이다를 읽고 D435 사진을 저장합니다. 실행 코드, 녹화 영상, 터미널 캡처와 관측 로그를 함께 제공합니다.
+[13강 · ReAct와 Tool Use](lessons/13-react/)에서는 Qwen으로 한국어 지시를 해석하고, Isaac Sim에서 시각·언어 모델로 촬영 여부를 결정합니다. Waffle VLA로 지정 색상의 블록을 옮기고 휠 피드백으로 차체도 전진시킵니다. 실행 코드, 녹화 영상, 터미널 캡처와 관측 로그를 함께 제공합니다.
 
 ## 설치와 실습 순서
 

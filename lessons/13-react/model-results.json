@@ -1,0 +1,146 @@
+[
+  {
+    "request": "1.5미터 안에 물체가 있으면 사진을 찍어 줘.",
+    "model": "qwen2.5:1.5b",
+    "plan": {
+      "intent": "photo",
+      "meters": 1.5
+    },
+    "outcome": {
+      "distance_m": 0.9036317467689514,
+      "threshold_m": 1.5,
+      "action": "capture",
+      "yes_logit": 8.3984375,
+      "no_logit": 7.88671875,
+      "range_allowed": true
+    }
+  },
+  {
+    "request": "20센티미터 이내에 물체가 있으면 사진을 찍어 줘.",
+    "model": "qwen2.5:1.5b",
+    "plan": {
+      "intent": "photo",
+      "meters": 0.2
+    },
+    "outcome": {
+      "distance_m": 0.9032915830612183,
+      "threshold_m": 0.2,
+      "action": "skip",
+      "yes_logit": 7.9375,
+      "no_logit": 8.1171875,
+      "range_allowed": false
+    }
+  },
+  {
+    "request": "차체를 앞으로 10센티미터 전진해 줘.",
+    "model": "qwen2.5:1.5b",
+    "plan": {
+      "intent": "drive",
+      "meters": 0.1
+    },
+    "outcome": {
+      "action": "drive",
+      "requested_m": 0.1,
+      "left_encoder_m": 0.10007246553897858,
+      "right_encoder_m": 0.10979773557186127
+    }
+  },
+  {
+    "request": "빨간 블록을 집어서 초록색 사각형 위에 놓아 줘.",
+    "model": "qwen2.5:1.5b",
+    "plan": {
+      "intent": "pick_red",
+      "meters": 0.0
+    },
+    "outcome": {
+      "layout": 0,
+      "instruction": "Pick up the red cube and place it on the green square.",
+      "selected": "red",
+      "initial": {
+        "red": [
+          0.21313002705574036,
+          -0.02688172459602356,
+          0.04999995231628418
+        ],
+        "blue": [
+          0.21396662294864655,
+          0.04688204452395439,
+          0.04999995231628418
+        ]
+      },
+      "goal": [
+        0.254,
+        0.008
+      ],
+      "final": {
+        "red": [
+          0.2578790485858917,
+          0.01086035743355751,
+          0.0509999543428421
+        ],
+        "blue": [
+          0.2129654884338379,
+          0.046763572841882706,
+          0.049999989569187164
+        ]
+      },
+      "max_lift_m": {
+        "red": 0.05925751477479935,
+        "blue": 0.0003238767385482788
+      },
+      "picked": true,
+      "wrong_pick": false,
+      "stable_s": 2.199999999999875,
+      "success": true
+    }
+  },
+  {
+    "request": "파란 블록을 집어서 초록색 사각형 위에 놓아 줘.",
+    "model": "qwen2.5:1.5b",
+    "plan": {
+      "intent": "pick_blue",
+      "meters": 0.0
+    },
+    "outcome": {
+      "layout": 0,
+      "instruction": "Pick up the blue cube and place it on the green square.",
+      "selected": "blue",
+      "initial": {
+        "red": [
+          0.21313002705574036,
+          -0.02688172459602356,
+          0.04999995231628418
+        ],
+        "blue": [
+          0.21396662294864655,
+          0.04688204452395439,
+          0.04999995231628418
+        ]
+      },
+      "goal": [
+        0.254,
+        0.008
+      ],
+      "final": {
+        "red": [
+          0.2127729207277298,
+          -0.026397723704576492,
+          0.05000000447034836
+        ],
+        "blue": [
+          0.25629520416259766,
+          0.009684008546173573,
+          0.0509999543428421
+        ]
+      },
+      "max_lift_m": {
+        "red": 0.003476712852716446,
+        "blue": 0.05936510115861893
+      },
+      "picked": true,
+      "wrong_pick": false,
+      "stable_s": 1.9499999999998892,
+      "success": true
+    }
+  }
+]

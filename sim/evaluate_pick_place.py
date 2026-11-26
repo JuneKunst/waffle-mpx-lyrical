@@ -19,6 +19,9 @@ parser.add_argument('--decisions', type=int, default=48)
 parser.add_argument('--seed', type=int, default=41)
 parser.add_argument('--controller', choices=['vla','teacher','color','baseline'], default='vla')
 parser.add_argument('--parent-vla',type=Path,help='Original HF VLA checkpoint used by the color adapter')
+parser.add_argument('--target', choices=['red','blue'], help='Run only the requested cube color')
+parser.add_argument('--show', action='store_true', help='Open the Isaac Sim viewport')
+parser.add_argument('--record-frames', action='store_true', help='Save the RGB frame at each policy step')
 args = parser.parse_args()
 if args.controller == 'color' and args.parent_vla is None:
     parser.error('--controller color requires --parent-vla')
@@ -28,7 +31,7 @@ args.output = args.output.resolve()
 args.output.mkdir(parents=True, exist_ok=False)
 root = Path(__file__).resolve().parents[1]
 from isaacsim import SimulationApp
-app = SimulationApp({'headless': True, 'width': 640, 'height': 480})
+app = SimulationApp({'headless': not args.show, 'width': 640, 'height': 480})
 import omni.replicator.core as rep
 import omni.timeline
 import omni.usd
@@ -175,7 +178,7 @@ def run(worker):
     if worker and json.loads(worker.stdout.readline()) != {'ready': True}:
         raise RuntimeError('Could not initialize policy')
     for layout, starts in enumerate(layouts()):
-        for selected in COLORS:
+        for selected in ([args.target] if args.target else COLORS):
             other = next(c for c in COLORS if c != selected)
             trial = args.output / f'{layout:02d}-{selected}'
             trial.mkdir()
@@ -227,6 +230,8 @@ def run(worker):
                         raise RuntimeError('Missing camera observation')
                     image = Image.fromarray(pixels[:,:,:3])
                     image.save(frame_path)
+                    if args.record_frames:
+                        image.save(trial/f'frame-{step:03d}.jpg', quality=92)
                     if args.controller == 'color' and step in (36,47,59,79):
                         image.save(trial/f'step-{step:02d}.jpg')
                     if step == 0:
@@ -286,7 +291,7 @@ def run(worker):
 try:
     env = os.environ.copy()
     # Kit modifies Python and shared library paths. Use the original training environment.
-    env['PYTHONPATH'] = str(root.parent/'.learning-deps')
+    env['PYTHONPATH'] = env.get('WAFFLE_LEARNING_DEPS', str(root.parent/'.learning-deps'))
     env.pop('PYTHONHOME', None)
     env['LD_LIBRARY_PATH'] = env.get('WAFFLE_WORKER_LD_LIBRARY_PATH','')
     python = env.get('ISAAC_LAB_PYTHON', str(Path.home()/'IsaacLab/.venv/bin/python'))
