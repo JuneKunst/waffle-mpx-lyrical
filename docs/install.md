@@ -21,11 +21,11 @@ echo "$ROS_DISTRO"
 
 ## 2. 클론과 빌드
 
-아래는 새 워크스페이스 기준입니다. 저장소 루트에 ROS 패키지들이 있으므로 `src` 자체를 클론 대상으로 사용합니다. 이미 클론했다면 기존 디렉터리에서 진행하세요.
+아래는 새 워크스페이스 기준입니다. 저장소 루트에 ROS 패키지들이 있으므로 `src` 자체를 클론 대상으로 사용합니다. `git clone` 기본값처럼 `~/waffle-mpx-lyrical`에 받으면 `rosdep install`에서 `given path 'src' does not exist` 오류가 나므로, 이미 다른 곳에 클론했다면 `mv ~/waffle-mpx-lyrical ~/waffle_mpx/src`로 옮긴 뒤 진행하세요.
 
 ```bash
 mkdir -p ~/waffle_mpx
-git clone https://github.com/SpartaPA/waffle-mpx-lyrical.git ~/waffle_mpx/src
+[ -d ~/waffle_mpx/src/.git ] || git clone https://github.com/SpartaPA/waffle-mpx-lyrical.git ~/waffle_mpx/src
 cd ~/waffle_mpx
 if [ ! -f /etc/ros/rosdep/sources.list.d/20-default.list ]; then sudo rosdep init; fi
 rosdep update

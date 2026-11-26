@@ -23,13 +23,16 @@ TurtleBot3 Waffle Pi에 OpenMANIPULATOR-X, LDS-03(COIN-D4), 전방 RealSense D43
 
 Pi 이미지를 굽고 SSH와 네트워크를 구성한 뒤 Ubuntu 공식 ROS 저장소를 등록합니다. 로봇의 Pi 기종은 지정되지 않아 64비트 Ubuntu Server 26.04가 지원하는 보드를 전제로 했습니다. GPU PC 검증 환경은 Ubuntu 24.04의 NVIDIA Lyrical 배포 패키지입니다. [Lyrical 지원 플랫폼](https://docs.ros.org/en/lyrical/Installation.html) · [Ubuntu용 ROS 패키지 설치](https://docs.ros.org/en/lyrical/Installation/Ubuntu-Install-Debs.html)
 
-Pi와 제어 PC에서 이 트리를 `~/waffle_mpx/src`에 두고 실행합니다. 새 시스템에서는 `sudo rosdep init`으로 rosdep을 최초 한 번 초기화합니다.
+Pi와 제어 PC에서 이 저장소를 `~/waffle_mpx/src`에 클론하고 `~/waffle_mpx`에서 빌드합니다. 저장소 루트가 곧 colcon의 `src` 디렉터리이므로, 다른 위치(예: `~/waffle-mpx-lyrical`)에 클론하면 `rosdep install`에서 `given path 'src' does not exist` 오류가 납니다. 이미 다른 곳에 클론했다면 `mv ~/waffle-mpx-lyrical ~/waffle_mpx/src`로 옮긴 뒤 진행하세요.
 
 ```bash
 sudo apt update
-sudo apt install ros-lyrical-ros-base ros-dev-tools
+sudo apt install git ros-lyrical-ros-base ros-dev-tools
 source /opt/ros/lyrical/setup.bash
+mkdir -p ~/waffle_mpx
+[ -d ~/waffle_mpx/src/.git ] || git clone https://github.com/SpartaPA/waffle-mpx-lyrical.git ~/waffle_mpx/src
 cd ~/waffle_mpx
+if [ ! -f /etc/ros/rosdep/sources.list.d/20-default.list ]; then sudo rosdep init; fi
 rosdep update
 rosdep install --from-paths src --ignore-src --rosdistro lyrical -y
 colcon build --symlink-install --parallel-workers 2 --cmake-args -DBUILD_TESTING=OFF
