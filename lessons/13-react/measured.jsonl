@@ -1,0 +1,9 @@
+{"turn": 1, "tool": "read_scan", "observation": {"ok": true, "source": "/scan", "frame": "base_scan", "stamp": [12, 0], "nearest_m": 0.8593, "rays": 400}}
+{"turn": 2, "tool": "take_photo", "observation": {"ok": true, "source": "/camera/color/image_raw", "frame": "camera_color_optical_frame", "stamp": [12, 200000000], "width": 640, "height": 480, "file": "waffle.ppm"}}
+{"stop": "photo_saved"}
+{"turn": 1, "tool": "read_scan", "observation": {"ok": true, "source": "/scan", "frame": "base_scan", "stamp": [12, 600000000], "nearest_m": 0.8596, "rays": 400}}
+{"stop": "outside_threshold"}
+{"turn": 1, "tool": "read_scan", "observation": {"ok": true, "source": "/scan", "frame": "base_scan", "stamp": [13, 300000000], "nearest_m": 0.8604, "rays": 400}}
+{"stop": "budget_exhausted"}
+{"turn": 1, "tool": "locate_cup", "observation": {"ok": false, "error": "unknown_tool"}}
+{"stop": "unknown_tool"}
