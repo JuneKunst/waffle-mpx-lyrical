@@ -110,6 +110,16 @@ python3 natural_command.py --output ~/waffle_mpx/lesson13-blue --show
 
 ## 4. 실측 결과와 영상
 
+[SeongminJaden YouTube 채널](https://www.youtube.com/@SeongminJaden)에 일부 공개로 게시한 영상입니다. 아래 링크로 바로 재생하거나 Google Slides 발표 화면에서 시청합니다.
+
+| 슬라이드 | YouTube 영상 |
+|---|---|
+| 15 | [Waffle VLA로 빨간 블록 집어 놓기](https://youtu.be/_jZU7IrpjoM) |
+| 16 | [한국어 지시로 파란 블록 집어 놓기](https://youtu.be/bRJ0UW_Or1g) |
+| 18 | [거리 조건에 따라 D435 사진 저장하기](https://youtu.be/Of1D111E5QE) |
+| 19 | [거리 조건을 바꿔 촬영 생략하기](https://youtu.be/d3v4smfxUc0) |
+| 20 | [호출 예산과 센서 오류 비교하기](https://youtu.be/nafUpiIKDk8) |
+
 [모델 실행 결과](model-results.json)에는 한국어 원문, Qwen 해석과 각 실행의 물리 판정이 있습니다. [빨간 블록 집기·놓기](media/red-arm.mp4)는 4Hz로 기록한 실제 D435 관측 프레임을 제어 주기에 맞춰 재생합니다. [파란 블록 명령 입력과 실행](media/model-blue.mp4)은 터미널과 시뮬레이션 영상을 함께 보여줍니다.
 
 ### 비교 실험 · 호출 예산과 도구 오류
