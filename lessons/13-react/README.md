@@ -13,7 +13,22 @@ mkdir -p ~/waffle_mpx
 git clone https://github.com/SpartaPA/waffle-mpx-lyrical.git ~/waffle_mpx/src
 ```
 
-기존 main 복제본에서는 `git -C ~/waffle_mpx/src pull --ff-only`로 업데이트합니다. [ROS 2 Lyrical·Isaac Sim·Isaac Lab 설치](../../docs/install.md)와 [학습 환경 준비](../../learning/README.md)를 완료합니다. Ollama를 설치하고 로컬 서버를 실행합니다. 기본 주소는 127.0.0.1의 11434번 포트입니다. 다음 명령으로 Qwen과 고정 리비전의 SmolVLM2 가중치를 미리 받습니다.
+기존 main 복제본에서는 `git -C ~/waffle_mpx/src pull --ff-only`로 업데이트합니다. [ROS 2 Lyrical·Isaac Sim·Isaac Lab 설치](../../docs/install.md)와 [학습 환경 준비](../../learning/README.md)를 완료합니다.
+
+### Ollama 설치와 서버 확인
+
+Isaac Sim을 실행할 Ubuntu PC에서 Ollama를 설치합니다. 이미 설치했다면 서버 확인부터 진행합니다. [Ollama 공식 Linux 설치 안내](https://docs.ollama.com/linux)
+
+```bash
+curl -fsSL https://ollama.com/install.sh | sh
+curl -fsS http://127.0.0.1:11434/api/tags
+```
+
+`models` 목록이 담긴 JSON이 나오면 서버가 준비됐습니다. 목록이 비어 있어도 서버 연결은 정상입니다. 연결이 거부되고 Ollama를 systemd 서비스로 설치했다면 `sudo systemctl start ollama`를 실행합니다. 직접 실행하는 환경에서는 별도 터미널에 `ollama serve`를 실행해 둡니다. [모델 목록 API](https://docs.ollama.com/api/tags)
+
+### 모델 다운로드
+
+Qwen과 고정 리비전의 SmolVLM2 가중치를 받습니다.
 
 ```bash
 ollama pull qwen2.5:1.5b
@@ -23,6 +38,24 @@ cd ~/waffle_mpx/src
 ~/IsaacLab/.venv/bin/python -c "from huggingface_hub import snapshot_download; snapshot_download('HuggingFaceTB/SmolVLM2-500M-Video-Instruct',revision='4cde9d208e19519c36917aa170fffc7e381aa0ad')"
 (cd learning/checkpoints && sha256sum -c SHA256SUMS)
 ```
+
+### Isaac Sim을 켜기 전에 LLM만 확인하기
+
+다음 명령은 실습 실행기가 사용하는 `interpret()`를 그대로 호출합니다. 시뮬레이터 없이 한국어 해석과 단위 변환을 확인할 수 있습니다.
+
+```bash
+cd ~/waffle_mpx/src/lessons/13-react
+python3 -c "from natural_command import interpret; print(interpret('20센티미터 이내에 물체가 있으면 사진을 찍어 줘.'))"
+```
+
+검증한 출력은 `{'intent': 'photo', 'meters': 0.2}`입니다. `intent`는 실행할 작업이고 `meters`는 미터 단위 거리입니다. 모델은 로컬 Ollama의 `/api/chat`에서 호출하므로 외부 API 키는 필요하지 않습니다. 프롬프트와 응답 형식은 [natural_command.py의 SYSTEM과 interpret 함수](natural_command.py)에 있습니다.
+
+| LLM이 반환한 작업 | 실행기가 받는 값 |
+|---|---|
+| `photo` | 0m 초과 12m 이하의 촬영 기준 거리 |
+| `drive` | 0m 초과 0.15m 이하의 전진 거리 |
+| `pick_red`, `pick_blue` | 선택한 블록 색상. 거리는 사용하지 않습니다. |
+| `unsupported` | 요청을 한 가지 지원 작업으로 다시 입력합니다. |
 
 ### 모델과 아키텍처
 
@@ -91,3 +124,14 @@ ROS_DOMAIN_ID=112 python3 waffle_react.py --timeout 2
 ```
 
 [촬영](media/near.mp4) · [생략](media/far.mp4) · [오류 처리](media/errors.mp4) · [입력 캡처](media/near-input.png) · [기준 로그](measured.jsonl). 시간 초과 실험은 도메인 112에 /scan 발행자가 없는 환경에서 실행합니다.
+
+## 실행이 멈췄을 때 확인할 항목
+
+| 증상 | 확인 방법 |
+|---|---|
+| Ollama 연결 거부 또는 모델을 찾을 수 없음 | 위의 /api/tags 명령으로 서버를 확인합니다. ollama list에 qwen2.5:1.5b가 없으면 ollama pull qwen2.5:1.5b를 실행합니다. |
+| 해석한 작업 또는 거리가 예상과 다름 | 결과 폴더의 request.json에서 원문과 plan을 비교합니다. 위의 LLM 단독 점검으로 거리·단위 또는 블록 색상을 명시한 한 문장을 다시 시험합니다. |
+| 촬영 중 카메라·라이다 시간 초과 | 터미널 A의 장면이 실행 중인지 확인합니다. 터미널 B에서 `ros2 topic info /scan`과 `ros2 topic info /camera/color/image_raw`를 실행해 발행자 수를 확인합니다. 두 터미널의 ROS_DOMAIN_ID가 같아야 합니다. |
+| FileExistsError | 실행기는 기존 결과를 보존합니다. --output에 새 폴더 이름을 지정합니다. |
+| 팔 실습에서 장면을 찾을 수 없음 | 터미널 A에서 scene.usda 생성까지 완료합니다. 다른 위치에 생성했다면 --scene에 해당 파일 경로를 지정합니다. |
+| 팔 실습 중 하위 프로세스 오류 | 결과 폴더의 isaac.log 마지막 부분을 확인합니다. 시뮬레이터와 학습용 Python을 다른 위치에 설치했다면 ISAAC_SIM_PYTHON과 ISAAC_LAB_PYTHON에 각 실행 파일의 절대 경로를 지정합니다. |
