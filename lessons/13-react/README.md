@@ -14,6 +14,29 @@
 
 [설치 안내](../../docs/install.md)에 따라 ROS 2 Lyrical 워크스페이스와 Isaac Sim 6.1을 준비합니다.
 
+## 준비 1 · 사용할 모델과 소프트웨어
+
+| 과정 | 모델과 가중치 | 입력과 출력 |
+|---|---|---|
+| 13강 터미널 명령 해석 | LLM 사용 없음. [natural_command.py](natural_command.py)의 Python 정규식으로 지정된 한국어 촬영 문형을 읽습니다. | 문장에서 거리와 단위를 추출하고 미터로 환산합니다. |
+| 13강 도구 선택 | VLA 사용 없음. [waffle_react.py](waffle_react.py)의 조건문과 등록된 도구 두 개를 사용합니다. | 유효한 라이다 거리와 예산으로 사진 저장 또는 종료를 선택합니다. |
+| 선택 실습 · 로봇 행동 예측 | 고정한 [SmolVLM2-500M-Video-Instruct 인코더](https://huggingface.co/HuggingFaceTB/SmolVLM2-500M-Video-Instruct/tree/4cde9d208e19519c36917aa170fffc7e381aa0ad)와 Waffle용 행동 예측층을 사용합니다. | D435 RGB 한 장, 언어 지시, 로봇 상태 7개를 받아 차체·팔·그리퍼 명령 7개를 예측합니다. |
+
+촬영 실습에는 ROS 2 Lyrical의 rclpy·sensor_msgs, Isaac Sim 6.1과 이를 실행할 GPU가 필요합니다. 촬영 실습은 API 키와 모델 다운로드 없이 실행합니다. 선택 VLA 실습용 PyTorch 환경과 가중치 준비 절차는 [학습 안내](../../learning/README.md)에 있습니다.
+
+## 준비 2 · 촬영 실습의 아키텍처
+
+1. **명령 해석** — 터미널에서 “20센티미터 이내에 물체가 있으면 사진을 한 장 저장해 주세요.”라고 입력하면 실행기에 임계값 0.2m가 전달됩니다.
+2. **센서 조회** — Isaac Sim의 [ROS 인터페이스](../../sim/ros_io.py)가 /scan을 발행합니다. read_scan은 유효한 거리의 최솟값과 프레임, 시뮬레이션 시각을 반환합니다.
+3. **분기** — 거리 ≤ 임계값이고 호출 예산이 남으면 take_photo를 선택합니다. 임계값을 초과하면 outside_threshold, 예산이 소진되면 budget_exhausted로 끝납니다.
+4. **저장 및 확인** — take_photo가 /camera/color/image_raw에서 RGB를 받아 PPM으로 저장합니다. 터미널에는 도구 이름, 관측값과 최종 종료 사유가 남습니다.
+
+## 준비 3 · 선택 VLA 예제의 아키텍처
+
+[policy.py](../../learning/policy.py)의 VLA는 RGB와 지시문에서 얻은 SmolVLM2 마지막 토큰 특징에 정규화한 로봇 상태 7개를 연결합니다. LayerNorm → 128차원 선형층 → SiLU → 출력층을 거쳐 7개 행동 축 각각에 대해 257개 구간 중 하나를 선택합니다. 행동 축은 차체 전진·회전, 팔 관절 4개와 그리퍼입니다.
+
+[배포 체크포인트](../../learning/checkpoints/waffle-hf-vla.pt)는 Waffle 행동 예측층을 담습니다. 인코더는 Hugging Face의 고정 리비전 4cde9d2에서 불러옵니다. 이 예제는 RT-2의 이산 행동 표현을 참고해 구현했습니다. 별도 [색상 집기 예제](../../learning/color-pick-place.md)는 고정한 128차원 특징과 색상 위치·크기를 결합해 92개 시점의 관절·그리퍼 목표를 회귀합니다.
+
 ## 터미널 A · Isaac Sim 6.1
 아래 명령은 강의용 로컬 도메인 113을 사용합니다. 같은 PC에서 모든 터미널을 엽니다.
 
